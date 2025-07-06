@@ -1,0 +1,11 @@
+---
+- name: Automate K8S Installation with Ansible on Ubuntu 22.04
+  hosts: localhost
+  gather_facts: yes 
+  become: yes 
+  vars:
+    k8s_version: "1.30"
+    k8s_tools:
+      - kubectl
+      - kubeadm
+      - kubelet
