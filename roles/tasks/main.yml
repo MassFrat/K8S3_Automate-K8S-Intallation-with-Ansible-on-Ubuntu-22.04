@@ -1,7 +1,7 @@
 - name: Update Apt Packages
   apt:
     update_cache: yes
-  register: apt_update_result # when: ansible_os_family == "Debian"
+  register: apt_update_result
 
 - name: Install Docker Package 
   apt:
