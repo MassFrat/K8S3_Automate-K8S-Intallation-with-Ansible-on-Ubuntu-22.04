@@ -87,7 +87,7 @@
     name: overlay
     state: present
 
-- name: Write Content To containerd.conf File
+- name: Write Content To kubernetes.conf File
   copy:
     content: |
       net.bridge.bridge-nf-call-ip6tables = 1
