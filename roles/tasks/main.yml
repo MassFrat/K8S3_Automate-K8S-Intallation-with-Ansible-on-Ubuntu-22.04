@@ -45,15 +45,15 @@
     state: present
 
 - name: Hold Kubernetes Tools
-dpkg_selections:
-  name: "{{ item }}"
-  selection: hold
-loop:
-  - kubelet
-  - kubeadm
-  - kubectl
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
 
-- name: Check Kubernetes tools versions
+- name: Check Kubernetes Tools Versions
   command: "{{ item }} --version"
   loop: "{{ k8s_tools }}"
   register: k8s_versions
