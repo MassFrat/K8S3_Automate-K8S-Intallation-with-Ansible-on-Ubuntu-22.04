@@ -86,4 +86,21 @@ loop:
       net.ipv4.ip_forward = 1
     dest: /etc/sysctl.d/kubernetes.conf
     backup: yes
+
+- name: Reload Network Configuration (sysctl)
+  systemd:
+    daemon_reload: yes
+  
+- name: Enable and Start Network Service
+  systemd:
+    name: kubelet
+    enabled: yes
+    state: started
+
+ - name: Set Hostname to "master-node" for Ubuntu
+   hostname:
+     name: master-node
+
+
+    
             
