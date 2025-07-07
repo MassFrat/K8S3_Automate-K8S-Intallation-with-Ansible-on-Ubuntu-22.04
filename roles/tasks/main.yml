@@ -7,7 +7,6 @@
   apt:
     name: docker.io
     state: present
-  #when: ansible_os_family == "Debian"
 
 - name: Start Docker Service
   service:
@@ -45,22 +44,14 @@
       - kubectl
     state: present
 
-    #- name: Install Kubernetes Tools (kubeadm, kubelet, kubectl)
-    #  pkg:
-    #    loop:
-    #      - kubeadm
-    #      - kubelet
-    #      - kubectl
-    #        #state: present
-  
 - name: Hold Kubernetes Tools
-  dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
-  loop:
-    - kubelet
-    - kubeadm
-    - kubectl
+dpkg_selections:
+  name: "{{ item }}"
+  selection: hold
+loop:
+  - kubelet
+  - kubeadm
+  - kubectl
 
 - name: Check Kubernetes tools versions
   command: "{{ item }} --version"
