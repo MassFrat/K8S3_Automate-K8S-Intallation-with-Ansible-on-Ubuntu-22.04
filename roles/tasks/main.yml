@@ -1,9 +1,10 @@
+---
 - name: Update Apt Packages
   apt:
     update_cache: yes
   register: apt_update_result
 
-- name: Install Docker Package 
+- name: Install Docker Package
   apt:
     name: docker.io
     state: present
@@ -34,7 +35,7 @@
 - name: Update Apt Packages
   apt:
     update_cache: yes
-  register: apt_update_result 
+  register: apt_update_result
 
 - name: Install Kubernetes Tools
   apt:
@@ -65,7 +66,7 @@
     swapoff -a
     sed -i '/swap/d' /etc/fstab  # sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
-- name: Write Content To containerd.conf File
+- name: Copy the Modules Content To containerd.conf File
   copy:
     content: |
       overlay
@@ -73,12 +74,12 @@
     dest: /etc/modules-load.d/containerd.conf
     backup: yes
 
-- name: Add The Required Containerd Modules
+- name: Add The Required containerd Modules
   modprobe:
     name: overlay
     state: present
 
-- name: Write Content To kubernetes.conf File
+- name: Copy Content To kubernetes.conf File
   copy:
     content: |
       net.bridge.bridge-nf-call-ip6tables = 1
@@ -87,20 +88,69 @@
     dest: /etc/sysctl.d/kubernetes.conf
     backup: yes
 
-- name: Reload Network Configuration (sysctl)
-  systemd:
-    daemon_reload: yes
-  
-- name: Enable and Start Network Service
-  systemd:
-    name: kubelet
+- name: Reload The containerd modules
+  service:
+    name: containerd
     enabled: yes
-    state: started
+    state: restarted
 
- - name: Set Hostname to "master-node" for Ubuntu
-   hostname:
-     name: master-node
+- name: Set Hostname to "master-node" for Ubuntu
+  hostname:
+    name: master-node
 
+- name: Add "master-node" Hostname to hosts file
+  lineinfile:
+    path: /etc/hosts
+    line: "127.1.1.1 master-node"
+    insertafter: "^ubuntu.myguest.virtualbox.org    ubuntu.*"
+    backup: yes
 
-    
-            
+- name: Copy Content to the kubelet file
+  copy:
+    content: |
+      KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
+    dest: /etc/default/kubelet
+    backup: yes
+
+- name: Reload daemon configuration and Restart kubelet
+  ansible.builtin.service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+- name: Copy Content to the kubelet file
+  copy:
+    content: |
+      {
+            "exec-opts": ["native.cgroupdriver=systemd"],
+            "log-driver": "json-file",
+            "log-opts": {
+            "max-size": "100m"
+         },
+             "storage-driver": "overlay2"
+             }
+    dest: /etc/docker/daemon.json
+    backup: yes
+
+- name: Reload systemd daemon and Restart Docker
+  ansible.builtin.service:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+#  lineinfile:
+#    path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+#    line: '"Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
+#    insertafter: '"^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml.*"' 
+#    backup: yes
+
+- name: Add Line To 10-kubeadm.conf file
+  lineinfile:
+    path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+    line: '"Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
+    insertafter: '"^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml.*"'
+    insertbefore: '"#This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically"'
+    backup: yes
+
