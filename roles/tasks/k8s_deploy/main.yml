@@ -2,7 +2,18 @@
 - name: Disable Swap
   shell: |
     swapoff -a
-    sed -i '/swap/d' /etc/fstab  # sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+    sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab #sed -i '/swap/d' /etc/fstab
+
+#- name: Disable All Swap Spaces Using swapoff command
+#  command: swapoff -a
+#  register: swapoff_result
+#  changed_when: swapoff_result.rc == 0
+
+#- name: Use sed command To Adjust File
+#  command: sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+#  register: sed_result
+#  changed_when: sed_result.rc == 0
+#  when: false
 
 - name: Copy the Modules Content To containerd.conf File
   copy:
