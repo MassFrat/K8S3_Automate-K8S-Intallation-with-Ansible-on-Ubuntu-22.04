@@ -54,6 +54,5 @@
 - name: Check Kubernetes Tools Versions
   command: "{{ item }} --version"
   loop: "{{ k8s_tools }}"
-  register: k8s_versions
   changed_when: false
   failed_when: false
