@@ -2,8 +2,7 @@
 - name: Update Apt Packages
   apt:
     update_cache: yes
-  register: apt_update_result
-
+  
 - name: Install Docker Package
   apt:
     name: docker.io
@@ -19,8 +18,7 @@
   service:
     name: docker
     state: started
-  register: docker_stat
-
+  
 - name: Add Kubernetes Signing Key
   apt_key:
     url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
@@ -35,8 +33,7 @@
 - name: Update Apt Packages
   apt:
     update_cache: yes
-  register: apt_update_result
-
+  
 - name: Install Kubernetes Tools
   apt:
     name:
