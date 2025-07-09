@@ -1,0 +1,62 @@
+---
+- name: Update Apt Packages
+  apt:
+    update_cache: yes
+  register: apt_update_result
+
+- name: Install Docker Package
+  apt:
+    name: docker.io
+    state: present
+
+- name: Start Docker Service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Verify Docker Is Running
+  service:
+    name: docker
+    state: started
+  register: docker_stat
+
+- name: Add Kubernetes Signing Key
+  apt_key:
+    url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
+    state: present
+
+- name: Add Kubernetes Software Repositories
+  apt_repository:
+    repo: "deb https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/ /"
+    state: present
+    filename: kubernetes
+
+- name: Update Apt Packages
+  apt:
+    update_cache: yes
+  register: apt_update_result
+
+- name: Install Kubernetes Tools
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+
+- name: Hold Kubernetes Tools
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+
+- name: Check Kubernetes Tools Versions
+  command: "{{ item }} --version"
+  loop: "{{ k8s_tools }}"
+  register: k8s_versions
+  changed_when: false
+  failed_when: false
