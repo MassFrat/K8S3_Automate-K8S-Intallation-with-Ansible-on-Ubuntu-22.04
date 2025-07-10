@@ -90,8 +90,8 @@
     enabled: yes
 
 - name: Add a Service Line to kubeadm.conf file
-    lineinfile:
-      path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
-      insertafter: '^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml'
-      line: 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
-      backup: yes
+  ansible.builtin.lineinfile:
+    path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+    insertafter: '^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml'
+    line: 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
+    backup: yes
