@@ -89,16 +89,9 @@
     state: restarted
     enabled: yes
 
-#  lineinfile:
-#    path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
-#    line: '"Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
-#    insertafter: '"^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml.*"' 
-#    backup: yes
-
-- name: Add Line To 10-kubeadm.conf file
-  lineinfile:
-    path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
-    line: '"Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
-    insertafter: '"^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml.*"'
-    insertbefore: '"#This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically"'
-    backup: yes
+- name: Add a Service Line to kubeadm.conf file
+    lineinfile:
+      path: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+      insertafter: '^Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml'
+      line: 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"'
+      backup: yes
