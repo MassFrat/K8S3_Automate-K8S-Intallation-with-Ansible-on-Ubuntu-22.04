@@ -97,10 +97,6 @@
     cmd: kubeadm init --control-plane-endpoint=master-node --upload-certs
 #this one above has an error
 
-- name: Check the status of the nodes
-  command:
-    cmd: kubectl get nodes
-
  - name: Create a Directory for the Kubernetes Cluster
    command:
      cmd: mkdir -p $HOME/.kube
@@ -123,6 +119,10 @@
 - name: Use kubectl to Untaint the Node
   command:
     cmd: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+- name: Check the status of the nodes
+  command:
+    cmd: kubectl get nodes
 
 - name: 
   debug:
