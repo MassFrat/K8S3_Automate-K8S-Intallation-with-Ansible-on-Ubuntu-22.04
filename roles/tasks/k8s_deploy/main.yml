@@ -4,17 +4,6 @@
     swapoff -a
     sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab #sed -i '/swap/d' /etc/fstab
 
-#- name: Disable All Swap Spaces Using swapoff command
-#  command: swapoff -a
-#  register: swapoff_result
-#  changed_when: swapoff_result.rc == 0
-
-#- name: Use sed command To Adjust File
-#  command: sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-#  register: sed_result
-#  changed_when: sed_result.rc == 0
-#  when: false
-
 - name: Copy the Modules Content To containerd.conf File
   copy:
     content: |
@@ -111,7 +100,30 @@
   command:
     cmd: kubectl get nodes
 
-- name:
+ - name: Create a Directory for the Kubernetes Cluster
+   command:
+     cmd: mkdir -p $HOME/.kube
+
+- name: Copy Conifiguration File to the Directory
+  copy:
+    content: |
+      cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    dest: $HOME/.kube
+    backup: yes
+
+- name: Change The Ownership of the Directory
+  command:
+    cmd: chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Use kubectl to Install Flannel
+  command:
+    cmd: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+
+- name: Use kubectl to Untaint the Node
+  command:
+    cmd: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+- name: 
   debug:
     msg: "Display info. about the nodes in the cluster"
     
