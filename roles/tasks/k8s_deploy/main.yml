@@ -95,6 +95,7 @@
 - name: Initialize Kubernetes cluster with kubeadm
   command:
     cmd: kubeadm init --control-plane-endpoint=master-node --upload-certs
+#this one above has an error
 
 - name: Check the status of the nodes
   command:
