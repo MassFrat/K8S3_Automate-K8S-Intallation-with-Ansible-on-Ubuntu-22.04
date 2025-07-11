@@ -1,4 +1,8 @@
 ---
+- name: Remove Old Reposository Files
+  command:
+    cmd: rm -f /etc/apt/sources.list.d/kubernetes.list
+
 - name: Update Apt Packages
   apt:
     update_cache: yes
