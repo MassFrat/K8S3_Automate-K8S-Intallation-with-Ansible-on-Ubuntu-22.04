@@ -1,51 +1,35 @@
 ---
-- name: Remove Old Reposository Files
-  command:
-    cmd: rm -f /etc/apt/sources.list.d/kubernetes.list
-
-- name: Update Apt Packages
-  apt:
-    update_cache: yes
-  
-- name: Install Docker Package
+- name: Update Repositories cache and Install "docker.io" package
   apt:
     name: docker.io
-    state: present
+    update_cache: yes
 
-- name: Start Docker Service
-  service:
-    name: docker
-    enabled: yes
-    state: started
-
-- name: Verify Docker Is Running
-  service:
-    name: docker
-    state: started
+- name: Ensure Docker is enabled and running
+   service:
+     name: docker
+     state: started
+     enabled: yes
   
-- name: Add Kubernetes Signing Key
-  apt_key:
-    url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
-    state: present
+- name: Download and dearmor Kubernetes Signing Key
+  shell: |
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ k8_version }}/deb/Release.key | \
+    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  args:
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 - name: Add Kubernetes Software Repositories
   apt_repository:
     repo: "deb https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/ /"
     state: present
-    filename: kubernetes
-#above could be reason for error with deployment
-
-- name: Update Apt Packages
-  apt:
     update_cache: yes
-  
+ 
 - name: Install Kubernetes Tools
   apt:
     name:
       - kubelet
       - kubeadm
       - kubectl
-    state: present
+   # state: present
 
 - name: Hold Kubernetes Tools
   dpkg_selections:
