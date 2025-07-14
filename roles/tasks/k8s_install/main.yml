@@ -74,10 +74,6 @@ tasks:
   changed_when: false
   failed_when: false
 
-#-name: Verify K8s tools versions ?alternate
-# command: 
-#cmd: kubeadm version
-
 - name: Display Kubernetes Tools Versions verified
   debug:
     msg: "Kubernetes Tools Versions verified"
