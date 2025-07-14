@@ -1,4 +1,4 @@
---
+---
 - name: Automate K8S installation  with Ansible on Ubuntu 22.04
   hosts: localhost
   gather_facts: yes
@@ -12,7 +12,7 @@
 
 tasks:
 
-- name: Update Repositories Cache and Install docker.io
+- name: Update Repositories Cache and Install "docker.io"
   apt:
     name: docker.io
     update_cache: yes
@@ -32,7 +32,7 @@ tasks:
     state: present
     update_cache: yes
 
-- name: Download Kubernetes signing key
+- name: Download Kubernetes Signing Key
   get_url:
     url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
     dest: /tmp/kubernetes-release.key
@@ -74,6 +74,6 @@ tasks:
   changed_when: false
   failed_when: false
 
-- name: Display Kubernetes Tools Versions verified
+- name: Display Kubernetes Tools Versions Verified
   debug:
     msg: "Kubernetes Tools Versions verified"
