@@ -1,17 +1,3 @@
----
-- name: Automate K8S installation  with Ansible on Ubuntu 22.04
-  hosts: localhost
-  gather_facts: yes
-  become: yes
-  vars:
-    k8s_version: "1.30" 
-    k8s_tools:
-      - kubectl
-      - kubeadm
-      - kubelet
-
-tasks:
-
 - name: Update Repositories Cache and Install "docker.io"
   apt:
     name: docker.io
