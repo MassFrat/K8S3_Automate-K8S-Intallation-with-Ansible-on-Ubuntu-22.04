@@ -1,5 +1,5 @@
 ---
-- name: Automate K8S Deplyment with Ansible on Ubuntu 22.04
+- name: Automate K8S Deployment with Ansible on Ubuntu 22.04
   hosts: localhost
   gather_facts: yes 
   become: yes 
