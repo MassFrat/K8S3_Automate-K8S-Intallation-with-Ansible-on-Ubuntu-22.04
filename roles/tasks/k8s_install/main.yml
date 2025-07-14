@@ -1,37 +1,64 @@
----
-- name: Update Repositories cache and Install "docker.io" package
+--
+- name: Automate K8S installation  with Ansible on Ubuntu 22.04
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+  vars:
+    k8s_version: "1.30" #1.30 before 1.33.1
+    k8s_tools:
+      - kubectl
+      - kubeadm
+      - kubelet
+
+tasks:
+
+- name: Update Repositories Cache and Install docker.io
   apt:
     name: docker.io
     update_cache: yes
 
 - name: Ensure Docker is enabled and running
-   service:
-     name: docker
-     state: started
-     enabled: yes
-  
-- name: Download and dearmor Kubernetes Signing Key
+  service:
+    name: docker
+    state: started
+    enabled: yes
+- name: Install Required Packages for Apt Repository
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Download Kubernetes signing key
+  get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
+    dest: /tmp/kubernetes-release.key
+    mode: '0644'
+
+- name: Dearmor and Install Kubernetes Signing Key
   shell: |
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ k8_version }}/deb/Release.key | \
-    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    cat /tmp/kubernetes-release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-- name: Add Kubernetes Software Repositories
+- name: Add Kubernetes Apt Repository
   apt_repository:
     repo: "deb https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/ /"
     state: present
     update_cache: yes
- 
+
 - name: Install Kubernetes Tools
   apt:
     name:
       - kubelet
       - kubeadm
       - kubectl
-   # state: present
+  #state: present
 
-- name: Hold Kubernetes Tools
+- name: Hold the Kubernetes Tools
   dpkg_selections:
     name: "{{ item }}"
     selection: hold
@@ -40,9 +67,17 @@
     - kubeadm
     - kubectl
 
-- name: Check Kubernetes Tools Versions
+- name: Verify Kubernetes Tools Versions
   command: "{{ item }} --version"
   loop: "{{ k8s_tools }}"
-  register: k8s_tools
+  register: k8s_versions
   changed_when: false
-  failed_when: false 
+  failed_when: false
+
+#-name: Verify K8s tools versions ?alternate
+# command: 
+#cmd: kubeadm version
+
+- name: Display Kubernetes Tools Versions verified
+  debug:
+    msg: "Kubernetes Tools Versions verified"
