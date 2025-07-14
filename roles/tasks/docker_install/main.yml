@@ -1,0 +1,11 @@
+---
+- name: Update Repositories Cache and Install "docker.io"
+  apt:
+    name: docker.io
+    update_cache: yes
+
+- name: Ensure Docker is enabled and running
+  service:
+    name: docker
+    state: started
+    enabled: yes
