@@ -1,0 +1,5 @@
+k8s_version: "1.30"
+k8s_tools:
+  - kubectl
+  - kubeadm
+  - kubelet 
