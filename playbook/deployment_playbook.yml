@@ -3,12 +3,6 @@
   hosts: localhost
   gather_facts: yes 
   become: yes 
-  vars:
-    k8s_version: "1.30"
-    k8s_tools:
-      - kubectl
-      - kubeadm
-      - kubelet 
   roles: 
    - docker_install
    - k8s_install
