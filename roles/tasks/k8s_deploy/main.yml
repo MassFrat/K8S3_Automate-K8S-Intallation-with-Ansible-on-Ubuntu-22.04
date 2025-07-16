@@ -39,7 +39,7 @@
 - name: Add "master-node" Hostname to hosts file
   lineinfile:
     path: /etc/hosts
-    line: "127.1.1.1 master-node" #unsure which IP to use 127.0.0.1 or 192.168.49.2
+    line: "127.1.1.1 master-node" 
     insertafter: "^ubuntu.myguest.virtualbox.org    ubuntu.*"
     backup: yes
 
