@@ -1,1 +1,1 @@
-# K8S3_Automate-K8S-Intallation-with-Ansible-on-Ubuntu-22.04
+https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
