@@ -5,6 +5,7 @@
   become: yes 
   
   roles: 
-   - docker_install
-   - k8s_install
-   - k8s_deploy
+    - docker_install
+    - k8s_install
+    - k8s_deploy
+ 
