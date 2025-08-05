@@ -4,6 +4,6 @@ Prerequisites
 - Command-line access.
 - Access to a user account with sudo privileges on each system.
 
-Refer to url below for detailed reference
+Refer to url (below) for a comprehensive reference
 
 https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
