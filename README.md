@@ -1,4 +1,4 @@
-Prerequisites
+## Prerequisites
 
 - Two or more servers running Ubuntu 22.04.
 - Command-line access.
